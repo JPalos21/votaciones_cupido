@@ -22,7 +22,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Render
 db_url = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite' + os.path.join(BASE_DIR, 'votos.db'))
-app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace("postgres://", "postgresql://")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
