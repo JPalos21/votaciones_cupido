@@ -28,7 +28,7 @@
         <button type="submit">Votar</button>
       </form>
       <p>Han votado ya <strong id="total-votos">{{ conteo.values()|sum }}</strong></p>
-
+      {% endif %}
       <!-- <p style="margin-top: 2rem; font-size: 0.9rem">
         Tu ID de sesión es: {{ user_id }}
       </p> -->
@@ -54,7 +54,6 @@
         </div>
         {% endfor %}
       </div>
-      {% endif %}
       {% endif %}
     </div>
     <script>
