@@ -1,6 +1,7 @@
 from flask import Flask, render_template, session, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import jsonify
 import uuid
 import os
 import hashlib
@@ -126,6 +127,19 @@ def vote():
         db.session.commit()
     
     return redirect('/')
+
+@app.route('/resultados_json')
+def resultados_json():
+    pregunta = Pregunta.query.filter_by(activa=True).first()
+    opciones = pregunta.opciones if pregunta else []
+    votos = Voto.query.all()
+    total = len(votos)
+    conteo = {o.id: 0 for o in opciones}
+    for v in votos:
+        if v.opcion_id in conteo:
+            conteo[v.opcion_id] += 1
+    porcentajes = {o.id: round((conteo[o.id] / total) * 100, 1) if total > 0 else 0 for o in opciones}
+    return jsonify({'porcentajes': porcentajes, 'conteo': conteo})
 
 @app.route('/login-admin', methods=['GET', 'POST'])
 def login_admin():

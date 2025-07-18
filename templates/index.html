@@ -15,9 +15,7 @@
       {% if voto or ip_voto %}
       <p>
         Gracias por tu voto, has elegido la opción
-        <strong>
-          {{ voto.opcion.texto }}
-        </strong>.
+        <strong> {{ voto.opcion.texto }} </strong>.
       </p>
       {% else %}
       <form method="POST" action="/vote" class="form">
@@ -29,12 +27,8 @@
         {% endfor %}
         <button type="submit">Votar</button>
       </form>
-      {% endif %}
-
-      {% if conteo[1] + conteo[2] > 1 %}
-      <p>
-        Han votado ya <strong>{{ conteo[1] + conteo[2] }}</strong> personas
-      </p>
+      {% endif %} {% if conteo[1] + conteo[2] > 1 %}
+      <p>Han votado ya <strong>{{ conteo[1] + conteo[2] }}</strong> personas</p>
       {% endif %}
 
       <!-- <p style="margin-top: 2rem; font-size: 0.9rem">
@@ -61,5 +55,25 @@
       </div>
       {% endif %}
     </div>
+    <script>
+        function actualizarResultados() {
+          fetch("/resultados_json")
+            .then((response) => response.json())
+            .then((data) => {
+              for (const [id, porcentaje] of Object.entries(data.porcentajes)) {
+                const elem = document.getElementById("porcentaje-" + id);
+                if (elem) {
+                  elem.textContent = porcentaje + "%";
+                }
+              }
+            })
+            .catch((err) =>
+              console.error("Error al actualizar resultados:", err)
+            );
+        }
+
+        setInterval(actualizarResultados, 5000); // cada 5 segundos
+        window.onload = actualizarResultados; // actualizar al cargar la página
+      </script>
   </body>
 </html>
