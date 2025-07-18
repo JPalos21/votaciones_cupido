@@ -27,9 +27,7 @@
         {% endfor %}
         <button type="submit">Votar</button>
       </form>
-      {% endif %} {% if conteo[1] + conteo[2] > 1 %}
-      <p>Han votado ya <strong>{{ conteo[1] + conteo[2] }}</strong> personas</p>
-      {% endif %}
+      <p>Han votado ya <strong id="total-votos">{{ conteo.values()|sum }}</strong></p>
 
       <!-- <p style="margin-top: 2rem; font-size: 0.9rem">
         Tu ID de sesión es: {{ user_id }}
@@ -76,6 +74,15 @@
                 texto.textContent = porcentaje + "%";
               }
             }
+            for (const [id, votos] of Object.entries(data.conteo)) {
+              const votosElem = document.getElementById("votos-" + id);
+              if (votosElem) votosElem.textContent = votos + "votos";
+            }
+
+            // Actualizar total de votos
+            const total = Object.values(data.conteo).reduce((acc, val) => acc + val, 0);
+            const totalElem = document.getElementById("total-votos");
+            if (totalElem) totalElem.textContent = total + " personas";
           })
           .catch((err) =>
             console.error("Error al actualizar resultados:", err)
