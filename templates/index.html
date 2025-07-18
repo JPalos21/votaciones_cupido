@@ -49,31 +49,40 @@
         background: {{ color }}"
             ></div>
           </div>
-          <div class="porcentaje">{{ porcentajes[opcion.id] }}%</div>
+          <div class="porcentaje" id="porcentaje-{{ opcion.id }}">
+            {{ porcentajes[opcion.id] }}%
+          </div>
         </div>
         {% endfor %}
       </div>
       {% endif %}
     </div>
     <script>
-        function actualizarResultados() {
-          fetch("/resultados_json")
-            .then((response) => response.json())
-            .then((data) => {
-              for (const [id, porcentaje] of Object.entries(data.porcentajes)) {
-                const elem = document.getElementById("porcentaje-" + id);
-                if (elem) {
-                  elem.textContent = porcentaje + "%";
-                }
+      function actualizarResultados() {
+        fetch("/resultados_json")
+          .then((response) => response.json())
+          .then((data) => {
+            for (const [id, porcentaje] of Object.entries(data.porcentajes)) {
+              // Actualizar el ancho de la barra
+              const barra = document.getElementById("barra-" + id);
+              if (barra) {
+                barra.style.width = porcentaje + "%";
               }
-            })
-            .catch((err) =>
-              console.error("Error al actualizar resultados:", err)
-            );
-        }
 
-        setInterval(actualizarResultados, 5000); // cada 5 segundos
-        window.onload = actualizarResultados; // actualizar al cargar la página
-      </script>
+              // Actualizar el número de porcentaje visible
+              const texto = document.getElementById("porcentaje-" + id);
+              if (texto) {
+                texto.textContent = porcentaje + "%";
+              }
+            }
+          })
+          .catch((err) =>
+            console.error("Error al actualizar resultados:", err)
+          );
+      }
+
+      setInterval(actualizarResultados, 5000); // cada 5 segundos
+      window.onload = actualizarResultados;
+    </script>
   </body>
 </html>
