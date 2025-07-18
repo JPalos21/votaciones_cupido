@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Votación en directo</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>💘 Votaciones Cupido</h1>
+
+      <h2>{{ pregunta.texto }}</h2>
+
+      {% if voto or ip_voto %}
+      <p>
+        Gracias por tu voto, has elegido la opción
+        <strong>
+          {{ voto.opcion.texto }}
+        </strong>.
+      </p>
+      {% else %}
+      <form method="POST" action="/vote" class="form">
+        {% for opcion in pregunta.opciones %}
+        <label>
+          <input type="radio" name="opcion_id" value="{{ opcion.id }}" />
+          {{ opcion.texto }} </label
+        ><br />
+        {% endfor %}
+        <button type="submit">Votar</button>
+      </form>
+      {% endif %}
+
+      {% if conteo[1] + conteo[2] > 1 %}
+      <p>
+        Han votado ya <strong>{{ conteo[1] + conteo[2] }}</strong> personas
+      </p>
+      {% endif %}
+
+      <!-- <p style="margin-top: 2rem; font-size: 0.9rem">
+        Tu ID de sesión es: {{ user_id }}
+      </p> -->
+
+      {% if porcentajes %}
+      <h2>Resultados</h2>
+      <div class="resultados">
+        {% for opcion, color in opciones_coloreadas %}
+        <div class="barra">
+          <div class="letra">{{ opcion.texto }}</div>
+          <div class="barra-fondo">
+            <div
+              class="barra-color"
+              style="
+        width: {{ porcentajes[opcion.id] }}%;
+        background: {{ color }}"
+            ></div>
+          </div>
+          <div class="porcentaje">{{ porcentajes[opcion.id] }}%</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

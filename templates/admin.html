@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administrar pregunta</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container-pregunta">
+      <h2>Crear nueva pregunta</h2>
+      <form method="POST">
+        <input name="pregunta" placeholder="Pregunta" size="100" required />
+        <input name="opcion1" placeholder="Opción 1" required />
+        <input name="opcion2" placeholder="Opción 2" required />
+        <input name="opcion3" placeholder="Opción 3" />
+        <input name="opcion4" placeholder="Opción 4" />
+        <button type="submit">Guardar</button>
+      </form>
+      <a class="cerrar" href="/logout-admin">Cerrar sesión</a><br><br>
+      <a class="reiniciar" href="/reiniciar-base">Reiniciar base de datos</a>
+    </div>
+  </body>
+</html>
