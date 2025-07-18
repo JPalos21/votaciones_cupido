@@ -18,13 +18,18 @@ ADMIN_PASS = 'scrypt:32768:8:1$xPxzJirs8i7mNMjS$069ca10664d66688e931b97417d822be
 colores = ['#E81E1E', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0']
 
 # Configuracion de la base de datos
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+#BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-# Render
-db_url = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite' + os.path.join(BASE_DIR, 'votos.db'))
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace("postgres://", "postgresql://")
+# Configuración de la base de datos
+db_url = os.getenv('DATABASE_URL')
+if db_url:
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace("postgres://", "postgresql://")
+else:
+    # Fallback a SQLite (solo para desarrollo/local)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+    print("⚠️ Advertencia: DATABASE_URL no encontrada. Usando SQLite local.")
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
 # Modelo
