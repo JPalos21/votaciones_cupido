@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = 'super-secreto' # para las sesiones
 
 #hashed = generate_password_hash("AdminCupido123")
-print("Contraseña ")
+#print("Contraseña ")
 #print (hashed)
 
 ADMIN_USER = 'admin'
