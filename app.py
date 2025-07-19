@@ -83,12 +83,16 @@ def index():
         o.id: round((conteo[o.id] / total) * 100, 1) if total > 0 else 0
         for o in opciones
     }
-    
-    user_id = session.get('user_id')
-    voto = Voto.query.filter_by(user_id = user_id).first()
 
     if not pregunta:
         return "No hay pregunta activa en este momento."
+    
+    if session.get('pregunta_id') != pregunta.id:
+        session['pregunta_id'] = pregunta.id
+        session['user_id'] = str(uuid.uuid4())
+    
+    user_id = session.get('user_id')
+    voto = Voto.query.filter_by(user_id = user_id).first()
 
     return render_template('index.html', pregunta=pregunta, opciones=opciones, porcentajes=porcentajes, voto=voto, user_id=user_id,
                            opciones_coloreadas=opciones_coloreadas, conteo=conteo)
