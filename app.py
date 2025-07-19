@@ -49,9 +49,10 @@ class Voto(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.String(64), nullable = False)
     opcion_id = db.Column(db.Integer, db.ForeignKey('opcion.id'), nullable=False)
-    ip_hash = db.Column(db.String(64))
+    pregunta_id = db.Column(db.Integer, db.ForeignKey('pregunta.id'), nullable=False)
 
-    opcion = db.relationship('Opcion')
+    opcion = db.relationship('Opcion', backref='votos')
+    pregunta = db.relationship('Pregunta', backref='votos')
 
 # Si no existe creamos la base de datos
 with app.app_context():
@@ -95,16 +96,17 @@ def index():
 @app.route('/vote', methods=['POST'])
 def vote():
     user_id = session.get('user_id')
+    opcion_id = request.form.get('opcion_id')
+    opcion = Opcion.query.get(opcion_id)
+    pregunta_id = opcion.pregunta_id
+    
     if not user_id:
         session['user_id'] = str(uuid.uuid4())
         user_id = session['user_id']
 
-    voto_existente = Voto.query.filter_by(user_id=user_id).first()
+    voto_existente = Voto.query.filter_by(user_id=user_id, pregunta_id=pregunta_id).first()
     if voto_existente:
         return redirect('/')
-    
-    opcion_id = request.form.get('opcion_id')
-    opcion = Opcion.query.get(opcion_id)
 
     if opcion:
         nuevo_voto = Voto(user_id=user_id, opcion_id=opcion.id)
