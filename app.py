@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import jsonify
 import uuid
 import os
-import hashlib
 
 
 app = Flask(__name__)
@@ -58,10 +57,6 @@ class Voto(db.Model):
 with app.app_context():
     db.create_all()
 
-# Función para hashear la ip
-def hash_ip(ip):
-    return hashlib.sha256(ip.encode()).hexdigest()
-
 @app.before_request
 def identificar_usuario():
     if 'user_id' not in session:
@@ -89,40 +84,30 @@ def index():
     }
     
     user_id = session.get('user_id')
-    voto = Voto.query.filter_by(user_id = user_id).first() if user_id else None
-
-    ip = request.remote_addr
-    ip_hash = hashlib.sha256(ip.encode()).hexdigest()
-    ip_voto = Voto.query.filter_by(ip_hash=ip_hash).first()
-
-    voto_mostrar = voto if voto else ip_voto
+    voto = Voto.query.filter_by(user_id = user_id).first()
 
     if not pregunta:
         return "No hay pregunta activa en este momento."
 
-    return render_template('index.html', pregunta=pregunta, opciones=opciones, porcentajes=porcentajes, voto=voto_mostrar, user_id=user_id,
+    return render_template('index.html', pregunta=pregunta, opciones=opciones, porcentajes=porcentajes, voto=voto, user_id=user_id,
                            opciones_coloreadas=opciones_coloreadas, conteo=conteo)
     
 @app.route('/vote', methods=['POST'])
 def vote():
-    ip = request.remote_addr
-    ip_hash = hash_ip(ip)
-
     user_id = session.get('user_id')
     if not user_id:
         session['user_id'] = str(uuid.uuid4())
         user_id = session['user_id']
 
-    voto_existente = Voto.query.filter_by(ip_hash=ip_hash).first()
+    voto_existente = Voto.query.filter_by(user_id=user_id).first()
     if voto_existente:
-        flash("Ya has votado desde esta dirección")
         return redirect('/')
     
     opcion_id = request.form.get('opcion_id')
     opcion = Opcion.query.get(opcion_id)
 
     if opcion:
-        nuevo_voto = Voto(user_id=user_id, opcion_id=opcion.id, ip_hash=ip_hash)
+        nuevo_voto = Voto(user_id=user_id, opcion_id=opcion.id)
         db.session.add(nuevo_voto)
         db.session.commit()
     
