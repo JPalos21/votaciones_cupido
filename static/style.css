@@ -290,6 +290,7 @@ button:hover {
 
   .barra-color {
     min-width: 5%;
+    min-height: 25px;
   }
 
   .container .form label {
