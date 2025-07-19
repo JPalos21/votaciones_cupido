@@ -99,7 +99,7 @@ def vote():
     opcion_id = request.form.get('opcion_id')
     opcion = Opcion.query.get(opcion_id)
     pregunta_id = opcion.pregunta_id
-    
+
     if not user_id:
         session['user_id'] = str(uuid.uuid4())
         user_id = session['user_id']
@@ -109,7 +109,7 @@ def vote():
         return redirect('/')
 
     if opcion:
-        nuevo_voto = Voto(user_id=user_id, opcion_id=opcion.id)
+        nuevo_voto = Voto(user_id=user_id, opcion_id=opcion.id, pregunta_id=pregunta_id)
         db.session.add(nuevo_voto)
         db.session.commit()
     
